@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/predict";
+const API_URL = `${process.env.REACT_APP_API_BASE_URL}/predict`;
 
 export const checkUrlSafety = async (url) => {
   if (!url) {
