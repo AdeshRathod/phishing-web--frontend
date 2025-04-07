@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { checkUrlSafety } from "./api/phishingApi";
 import { motion } from "framer-motion";
@@ -16,7 +17,7 @@ function App() {
 
     try {
       const response = await checkUrlSafety(url);
-      setResult(response.prediction);
+      setResult(response);
     } catch (err) {
       setError("Something went wrong. Try again.");
     } finally {
@@ -38,7 +39,7 @@ function App() {
     app: {
       textAlign: "center",
       width: "100%",
-      maxWidth: "500px",
+      maxWidth: "600px",
     },
     form: {
       marginBottom: "2rem",
@@ -48,37 +49,34 @@ function App() {
       alignItems: "center",
     },
     input: {
-      padding: "0.7rem",
+      padding: "0.8rem",
       width: "100%",
       borderRadius: "10px",
       border: "1px solid #ccc",
       fontSize: "1rem",
-      maxWidth: "400px",
+      maxWidth: "450px",
     },
     button: {
-      padding: "0.7rem 1.5rem",
+      padding: "0.8rem 2rem",
       borderRadius: "10px",
       backgroundColor: "#007bff",
       color: "white",
       border: "none",
-      fontSize: "1rem",
+      fontSize: "1.1rem",
       cursor: "pointer",
       transition: "background 0.3s ease",
-      width: "fit-content",
-    },
-    buttonHover: {
-      backgroundColor: "#0056b3",
     },
     resultCard: {
       marginTop: "20px",
-      padding: "20px",
+      padding: "30px",
       borderRadius: "20px",
-      fontSize: "1.5rem",
+      fontSize: "1rem",
       width: "100%",
-      maxWidth: "400px",
+      maxWidth: "500px",
       margin: "20px auto",
-      boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
+      boxShadow: "0 8px 30px rgba(0, 0, 0, 0.15)",
       transition: "transform 0.3s",
+      backgroundColor: "white",
     },
     safe: {
       backgroundColor: "#d4edda",
@@ -91,6 +89,25 @@ function App() {
     error: {
       color: "red",
       marginTop: "1rem",
+    },
+    detailItem: {
+      textAlign: "left",
+      marginBottom: "10px",
+    },
+    badge: {
+      display: "inline-block",
+      padding: "5px 10px",
+      borderRadius: "8px",
+      fontSize: "0.8rem",
+      marginLeft: "10px",
+    },
+    badgeTrue: {
+      backgroundColor: "#d4edda",
+      color: "#155724",
+    },
+    badgeFalse: {
+      backgroundColor: "#f8d7da",
+      color: "#721c24",
     },
     footer: {
       marginTop: "3rem",
@@ -136,13 +153,47 @@ function App() {
           <motion.div
             style={{
               ...styles.resultCard,
-              ...(result === "Legitimate" ? styles.safe : styles.phishing),
+              ...(result.prediction === "Legitimate" ? styles.safe : styles.phishing),
             }}
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", stiffness: 200 }}
           >
-            <h2>{result}</h2>
+            <h2>🔎 Result: {result.prediction}</h2>
+
+            <div style={{ marginTop: "20px", textAlign: "left" }}>
+              <div style={styles.detailItem}>
+                <strong>Domain Age:</strong> {result.external_checks.domain_age_days} days
+              </div>
+
+              <div style={styles.detailItem}>
+                <strong>Safe Browsing:</strong>
+                <span
+                  style={{
+                    ...styles.badge,
+                    ...(result.external_checks.safe_browsing_detected
+                      ? styles.badgeTrue
+                      : styles.badgeFalse),
+                  }}
+                >
+                  {result.external_checks.safe_browsing_detected ? "Detected" : "Not Detected"}
+                </span>
+              </div>
+
+              <div style={styles.detailItem}>
+                <strong>VirusTotal Scan:</strong>
+                <span
+                  style={{
+                    ...styles.badge,
+                    ...(result.external_checks.virustotal_detected
+                      ? styles.badgeTrue
+                      : styles.badgeFalse),
+                  }}
+                >
+                  {result.external_checks.virustotal_detected ? "Detected" : "Not Detected"}
+                </span>
+              </div>
+            </div>
           </motion.div>
         )}
 
