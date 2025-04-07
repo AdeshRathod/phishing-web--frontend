@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { checkUrlSafety } from "./api/phishingApi";
 import { motion } from "framer-motion";
@@ -47,6 +46,7 @@ function App() {
       flexDirection: "column",
       gap: "10px",
       alignItems: "center",
+      width: "100%",
     },
     input: {
       padding: "0.8rem",
@@ -54,7 +54,7 @@ function App() {
       borderRadius: "10px",
       border: "1px solid #ccc",
       fontSize: "1rem",
-      maxWidth: "450px",
+      boxSizing: "border-box",
     },
     button: {
       padding: "0.8rem 2rem",
@@ -65,6 +65,8 @@ function App() {
       fontSize: "1.1rem",
       cursor: "pointer",
       transition: "background 0.3s ease",
+      width: "100%",
+      maxWidth: "250px",
     },
     resultCard: {
       marginTop: "20px",
@@ -77,6 +79,7 @@ function App() {
       boxShadow: "0 8px 30px rgba(0, 0, 0, 0.15)",
       transition: "transform 0.3s",
       backgroundColor: "white",
+      boxSizing: "border-box",
     },
     safe: {
       backgroundColor: "#d4edda",
@@ -93,6 +96,7 @@ function App() {
     detailItem: {
       textAlign: "left",
       marginBottom: "10px",
+      wordBreak: "break-word",
     },
     badge: {
       display: "inline-block",
@@ -153,7 +157,9 @@ function App() {
           <motion.div
             style={{
               ...styles.resultCard,
-              ...(result.prediction === "Legitimate" ? styles.safe : styles.phishing),
+              ...(result.prediction === "Legitimate"
+                ? styles.safe
+                : styles.phishing),
             }}
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -176,7 +182,9 @@ function App() {
                       : styles.badgeFalse),
                   }}
                 >
-                  {result.external_checks.safe_browsing_detected ? "Detected" : "Not Detected"}
+                  {result.external_checks.safe_browsing_detected
+                    ? "Detected"
+                    : "Not Detected"}
                 </span>
               </div>
 
@@ -190,7 +198,9 @@ function App() {
                       : styles.badgeFalse),
                   }}
                 >
-                  {result.external_checks.virustotal_detected ? "Detected" : "Not Detected"}
+                  {result.external_checks.virustotal_detected
+                    ? "Detected"
+                    : "Not Detected"}
                 </span>
               </div>
             </div>
