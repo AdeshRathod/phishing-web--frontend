@@ -8,7 +8,8 @@ import { Chart as ChartJS, BarElement, CategoryScale, LinearScale } from 'chart.
 ChartJS.register(BarElement, CategoryScale, LinearScale);
 
 const ResultCard = ({ result }) => {
-  const isLegitimate = result.prediction.includes("Legitimate");
+  const phishingChance = result.model_probability_phishing * 100;
+  const isHighRisk = phishingChance >= 50;
 
   const importantFeatures = [
     { label: "Uses HTTPS", value: result.extracted_features.uses_https },
@@ -38,8 +39,8 @@ const ResultCard = ({ result }) => {
         marginTop: "20px",
         padding: "30px",
         borderRadius: "20px",
-        backgroundColor: isLegitimate ? "#d4edda" : "#f8d7da",
-        color: isLegitimate ? "#155724" : "#721c24",
+        backgroundColor: isHighRisk ? "#f8d7da" : "#d4edda",
+        color: isHighRisk ? "#721c24" : "#155724",
         boxShadow: "0 8px 30px rgba(0, 0, 0, 0.15)",
       }}
       initial={{ scale: 0.8, opacity: 0 }}
@@ -47,26 +48,25 @@ const ResultCard = ({ result }) => {
       transition={{ type: "spring", stiffness: 200 }}
     >
       <h2 style={{ textAlign: "center" }}>
-        {isLegitimate ? "✅ Safe Website" : "⚠️ Potential Phishing Detected"}
+        {isHighRisk ? "⚠️ Potential Phishing Detected" : "✅ Safe Website"}
       </h2>
 
       <div style={{ margin: "20px auto", width: "120px" }}>
         <CircularProgressbar
-          value={result.model_probability_phishing * 100}
-          text={`${(result.model_probability_phishing * 100).toFixed(1)}%`}
+          value={phishingChance}
+          text={`${phishingChance.toFixed(1)}%`}
           styles={buildStyles({
-            pathColor: isLegitimate ? "#28a745" : "#dc3545",
-            textColor: isLegitimate ? "#28a745" : "#dc3545",
+            pathColor: isHighRisk ? "#dc3545" : "#28a745",
+            textColor: isHighRisk ? "#dc3545" : "#28a745",
           })}
         />
+        <div style={{ textAlign: "center", marginTop: "10px", fontWeight: "bold" }}>
+          Phishing Chance's
+        </div>
       </div>
 
       <div style={{ marginTop: "20px", textAlign: "left" }}>
         <h3>🛡️ External Checks</h3>
-        <p>
-          <strong>Safe Browsing:</strong>{" "}
-          {result.external_checks.safe_browsing_detected ? "⚠️ Detected" : "✅ Not Detected"}
-        </p>
         <p>
           <strong>VirusTotal Scan:</strong>{" "}
           {result.external_checks.virustotal_detected ? "⚠️ Detected" : "✅ Not Detected"}
