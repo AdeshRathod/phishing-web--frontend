@@ -121,10 +121,12 @@
 import React from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import AllRoutes from "./Routes"; // This will contain your routes
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <Router>
+      <Navbar />
       <AllRoutes />
     </Router>
   );

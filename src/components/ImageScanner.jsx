@@ -1,23 +1,33 @@
-// HomePage.jsx
+// ImageScanner.jsx
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { checkUrlSafety } from "./api/phishingApi";
-import ResultCard from "./components/ResultCard";
+import ResultCard from "./ResultCard";
+import { scanImageFile } from "../api/imageScanApi";
 
-function HomePage() {
-  const [url, setUrl] = useState("");
+function ImageScanner() {
+  const [file, setFile] = useState(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+    setResult(null);
+    setError(null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!file) {
+      setError("Please upload an image file.");
+      return;
+    }
+    setLoading(true);
     setError(null);
     setResult(null);
-    setLoading(true);
 
     try {
-      const response = await checkUrlSafety(url);
+      const response = await scanImageFile(file);
       setResult(response);
     } catch (err) {
       setError("Something went wrong. Try again.");
@@ -27,12 +37,11 @@ function HomePage() {
   };
 
   return (
-
     <div style={{
       margin: 0,
       fontFamily: "Poppins, sans-serif",
-      background: "linear-gradient(135deg, #e0f7fa, #ffffff)",
-      minHeight: "80vh",
+      background: "linear-gradient(135deg, #f0f7ff, #ffffff)",
+      minHeight: "100vh",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
@@ -44,7 +53,7 @@ function HomePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
         >
-          🛡️ Phishing Website Detector
+          🖼️ Image Malware Scanner
         </motion.h1>
 
         <motion.form
@@ -62,11 +71,9 @@ function HomePage() {
           transition={{ delay: 0.5, duration: 0.8 }}
         >
           <input
-            type="text"
-            placeholder="Enter website URL"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            required
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
             style={{
               padding: "0.8rem",
               width: "100%",
@@ -82,7 +89,7 @@ function HomePage() {
             style={{
               padding: "0.8rem 2rem",
               borderRadius: "10px",
-              backgroundColor: "#007bff",
+              backgroundColor: "#28a745",
               color: "white",
               border: "none",
               fontSize: "1.1rem",
@@ -92,7 +99,7 @@ function HomePage() {
               maxWidth: "250px",
             }}
           >
-            {loading ? "Checking..." : "Check"}
+            {loading ? "Scanning..." : "Scan Image"}
           </button>
         </motion.form>
 
@@ -117,4 +124,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default ImageScanner;
