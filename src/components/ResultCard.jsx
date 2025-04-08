@@ -2,12 +2,15 @@ import React from "react";
 import { motion } from "framer-motion";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import 'react-circular-progressbar/dist/styles.css';
-import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale } from 'chart.js';
+import { useNavigate } from "react-router-dom";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale);
 
 const ResultCard = ({ result }) => {
+
+  const navigate = useNavigate();
+
   const phishingChance = result.model_probability_phishing * 100;
   const isHighRisk = phishingChance >= 50;
 
@@ -17,21 +20,6 @@ const ResultCard = ({ result }) => {
     { label: "Has IP Address", value: result.extracted_features.has_ip },
     { label: "Has Suspicious Words", value: result.extracted_features.has_suspicious_words },
   ];
-
-  const chartData = {
-    labels: ["Domain Age (days)", "Domain Length", "Path Length"],
-    datasets: [
-      {
-        label: "Value",
-        data: [
-          result.external_checks.domain_age_days,
-          result.extracted_features.domain_length,
-          result.extracted_features.path_length,
-        ],
-        backgroundColor: ["#4caf50", "#2196f3", "#ff9800"],
-      },
-    ],
-  };
 
   return (
     <motion.div
@@ -85,15 +73,52 @@ const ResultCard = ({ result }) => {
             </li>
           ))}
         </ul>
-
         <h3>📊 URL Characteristics</h3>
-        <div style={{ marginTop: "10px" }}>
-          <Bar data={chartData} options={{ plugins: { legend: { display: false } } }} />
+        <div style={{ display: "flex", gap: "15px", marginTop: "10px", flexWrap: "wrap" }}>
+          <div style={{ background: "#f0f0f0", padding: "10px 20px", borderRadius: "10px" }}>
+            <strong>Domain Age:</strong><br /> {result.external_checks.domain_age_days} days
+          </div>
+          <div style={{ background: "#f0f0f0", padding: "10px 20px", borderRadius: "10px" }}>
+            <strong>Domain Length:</strong><br /> {result.extracted_features.domain_length} characters
+          </div>
+          <div style={{ background: "#f0f0f0", padding: "10px 20px", borderRadius: "10px" }}>
+            <strong>Path Length:</strong><br /> {result.extracted_features.path_length} characters
+          </div>
         </div>
 
+
         <h3>🧠 AI Reasoning</h3>
-        <p>{result.reasoning[0]}</p>
+        <ul style={{ listStyle: "disc inside", paddingLeft: "20px" }}>
+          {result.reasoning.map((reason, index) => (
+            <li key={index} style={{ marginBottom: "8px" }}>
+              {reason}
+            </li>
+          ))}
+        </ul>
+
       </div>
+
+      <button
+        onClick={() => navigate(`/website-details`, { state: { result } })}
+        // onClick={() => navigate(`/website-details/${encodeURIComponent(result.url)}`, { state: { result } })}
+        style={{
+          backgroundColor: "#007bff",
+          color: "#fff",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "10px",
+          cursor: "pointer",
+          fontSize: "16px",
+          fontWeight: "bold",
+          boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+          transition: "background-color 0.3s",
+        }}
+        onMouseOver={(e) => (e.target.style.backgroundColor = "#0056b3")}
+        onMouseOut={(e) => (e.target.style.backgroundColor = "#007bff")}
+      >
+        🔎 View More Details
+      </button>
+
     </motion.div>
   );
 };
