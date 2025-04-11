@@ -11,18 +11,29 @@ function Navbar() {
     background: "linear-gradient(135deg, #007bff, #00d4ff)",
     color: "white",
     display: "flex",
-    justifyContent: "space-between",
+    flexDirection: "column",
     alignItems: "center",
     boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
   };
 
-  const linkStyle = (path) => ({
-    margin: "0 1rem",
-    color: location.pathname === path ? "#ffd700" : "white",
+
+  const tabsContainerStyle = {
+    display: "flex",
+    gap: "1rem",
+    flexWrap: "wrap",
+    justifyContent: "center",
+  };
+
+  const tabStyle = (path) => ({
+    padding: "0.5rem 1rem",
+    borderRadius: "999px",
+    backgroundColor: location.pathname === path ? "#ffd700" : "transparent",
+    color: location.pathname === path ? "#333" : "white",
+    border: "2px solid white",
     textDecoration: "none",
     fontWeight: "600",
-    fontSize: "1.1rem",
-    transition: "color 0.3s ease",
+    fontSize: "1rem",
+    transition: "all 0.3s ease",
   });
 
   return (
@@ -32,15 +43,12 @@ function Navbar() {
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div style={{ fontWeight: "bold", fontSize: "1.4rem" }}>
-        🛡️ MalScan
-      </div>
 
-      <div>
-        <Link to="/" style={linkStyle("/")}>
+      <div style={tabsContainerStyle}>
+        <Link to="/" style={tabStyle("/" )}>
           Detect Webpage
         </Link>
-        <Link to="/image-scan" style={linkStyle("/image-scan")}>
+        <Link to="/image-scan" style={tabStyle("/image-scan") }>
           Detect Image
         </Link>
       </div>
